@@ -339,12 +339,17 @@ class CityBuildingGame:
                     if not self.is_connected_road(row, col):
                         upkeep_cost += 1
 
-            # Upkeep cost for residential clusters
-            for cluster in residential_clusters:
-                if len(cluster) > 1:  # Only clusters (more than 1 connected) require upkeep
-                    upkeep_cost += 1
+        # Upkeep cost for residential clusters
+        for cluster in residential_clusters:
+            if len(cluster) > 1:  # Only clusters (more than 1 connected) require upkeep
+                upkeep_cost += 1
 
-        self.current_coins += coins - upkeep_cost
+        net_coins = coins - upkeep_cost
+        if self.current_coins + net_coins < 0:
+            print("\nNot enough coins to cover upkeep costs. Game Over.")
+            self.current_coins = 0
+        else:
+            self.current_coins += net_coins
 
     def find_residential_clusters(self):
         visited = [[False] * self.board_size for _ in range(self.board_size)]
