@@ -1,6 +1,5 @@
 import random
 
-
 class CityBuildingGame:
     def __init__(self):
         self.main_menu()
@@ -57,9 +56,9 @@ class CityBuildingGame:
 
             if choice == "1":
                 if turn == 1:
-                    self.build_first_building(board, current_coins)
+                    current_coins = self.build_first_building(board, current_coins)
                 else:
-                    self.build_building(board, current_coins)
+                    current_coins = self.build_building(board, current_coins)
             elif choice == "2":
                 self.demolish_building(board, current_coins)
             elif choice == "3":
@@ -84,17 +83,18 @@ class CityBuildingGame:
         building_type = input("Choose a building to construct: ").upper()
         if building_type not in ['R', 'I', 'C', 'O', '*']:
             print("Invalid building type. Please choose from R, I, C, O, *.")
-            return
+            return current_coins
 
-        row = int(input("Enter row (1-20): ")) - 1
-        col = int(input("Enter column (1-20): ")) - 1
+        row = int(input(f"Enter row (1-20): ")) - 1
+        col = int(input(f"Enter column (1-20): ")) - 1
 
         if board[row][col] != ' ':
             print("Cannot build on an occupied space.")
-            return
+            return current_coins
 
         board[row][col] = building_type
         current_coins -= 1
+        return current_coins
 
     def build_building(self, board, current_coins):
         # Allow the player to build a building adjacent to an existing building
@@ -102,13 +102,13 @@ class CityBuildingGame:
         building_type = input("Choose a building to construct: ").upper()
         if building_type not in ['R', 'I', 'C', 'O', '*']:
             print("Invalid building type. Please choose from R, I, C, O, *.")
-            return
+            return current_coins
 
         print("Select a location adjacent to an existing building:")
         self.display_board(board)
         while True:
-            row = int(input("Enter row (1-20): ")) - 1
-            col = int(input("Enter column (1-20): ")) - 1
+            row = int(input(f"Enter row (1-20): ")) - 1
+            col = int(input(f"Enter column (1-20): ")) - 1
 
             if self.is_adjacent_to_building(board, row, col):
                 if board[row][col] == ' ':
@@ -119,6 +119,8 @@ class CityBuildingGame:
                     print("Cannot build on an occupied space.")
             else:
                 print("Selected location is not adjacent to an existing building.")
+
+        return current_coins
 
     def is_adjacent_to_building(self, board, row, col):
         # Check if the given row, col is adjacent to an existing building
@@ -135,8 +137,8 @@ class CityBuildingGame:
         self.display_board(board)
 
         while True:
-            row = int(input("Enter row (1-20): ")) - 1
-            col = int(input("Enter column (1-20): ")) - 1
+            row = int(input(f"Enter row (1-20): ")) - 1
+            col = int(input(f"Enter column (1-20): ")) - 1
 
             if board[row][col] != ' ':
                 board[row][col] = ' '
@@ -214,7 +216,6 @@ class CityBuildingGame:
     def start_free_play_game(self):
         # Placeholder for implementing Free Play mode
         print("\nFree Play mode not implemented yet.")
-
 
 # Start the game
 if __name__ == "__main__":
