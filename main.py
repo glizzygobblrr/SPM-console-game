@@ -1,5 +1,3 @@
-import random
-
 class CityBuildingGame:
     def __init__(self):
         self.main_menu()
@@ -42,7 +40,7 @@ class CityBuildingGame:
         print("You have", self.initial_coins, "coins to build your city.")
 
         while self.current_coins > 0:
-            print("\nTurn:", self.turn)
+            print("\nCurrent turn:", self.turn)
             print("Coins left:", self.current_coins)
             print("Current score:", self.current_score)
             print("Current map:")
@@ -131,6 +129,125 @@ class CityBuildingGame:
                 return True
         return False
 
+    def start_free_play_game(self):
+        self.board_size = 5  # Initial size of the city grid
+        self.current_coins = 0  # Unlimited coins in Free Play mode
+        self.current_score = 0
+        self.current_profit = 0
+        self.current_upkeep = 0
+        self.turn = 1
+        self.board = [[' '] * self.board_size for _ in range(self.board_size)]
+
+        print("\nStarting new Free Play game.")
+        print("You have unlimited coins to build your city.")
+
+        while self.current_profit >= -20:  # End game if the city is making a loss for 20 turns
+            print("\nCurrent turn:", self.turn)
+            print("Current score:", self.current_score)
+            print("Current profit:", self.current_profit)
+            print("Current upkeep:", self.current_upkeep)
+            print("Current map:")
+            self.display_board(self.board)
+
+            print("\nOptions:")
+            print("1. Build a Building")
+            print("2. Demolish a Building")
+            print("3. Save Game")
+            print("4. Exit to Main Menu")
+            choice = input("Enter your choice: ")
+
+            if choice == "1":
+                self.build_building_free_play()
+                self.update_score_and_coins_free_play()
+            elif choice == "2":
+                self.demolish_building()
+                self.update_score_and_coins_free_play()
+            elif choice == "3":
+                self.save_game()
+            elif choice == "4":
+                print("Exiting Free Play game.")
+                break
+            else:
+                print("Invalid choice. Please enter a number from 1 to 4.")
+                continue
+
+            self.turn += 1
+
+        # Calculate final score and display
+        final_score = self.calculate_final_score()
+        print("\nFinal score:", final_score)
+        self.update_high_scores(final_score)
+
+    def build_building_free_play(self):
+        print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
+        building_type = input("Choose a building to construct: ").upper()
+        if building_type not in ['R', 'I', 'C', 'O', '*']:
+            print("Invalid building type. Please choose from R, I, C, O, *.")
+            return
+
+        row = int(input(f"Enter row (1-{self.board_size}): ")) - 1
+        col = int(input(f"Enter column (1-{self.board_size}): ")) - 1
+
+        if not self.is_valid_location(row, col):
+            print("Invalid location. Building must be placed on an empty cell or border.")
+            return
+
+        # Expand city grid if building is placed on the border
+        if self.is_on_border(row, col):
+            self.expand_city_grid()
+
+        self.board[row][col] = building_type
+        self.current_coins -= 1
+
+    def is_valid_location(self, row, col):
+        if 0 <= row < self.board_size and 0 <= col < self.board_size:
+            return self.board[row][col] == ' '
+        return False
+
+    def is_on_border(self, row, col):
+        return row == 0 or col == 0 or row == self.board_size - 1 or col == self.board_size - 1
+
+    def expand_city_grid(self):
+        new_board_size = self.board_size + 5  # Expand by 5 rows and columns on each side
+        new_board = [[' '] * new_board_size for _ in range(new_board_size)]
+
+        # Copy existing board to new expanded board
+        for r in range(self.board_size):
+            for c in range(self.board_size):
+                new_board[r + 5][c + 5] = self.board[r][c]
+
+        self.board = new_board
+        self.board_size = new_board_size
+
+    def update_score_and_coins_free_play(self):
+        self.current_score = self.calculate_final_score()
+        self.generate_coins_free_play()
+
+    def generate_coins_free_play(self):
+        coins = 0
+        upkeep_cost = 0
+
+        for row in range(self.board_size):
+            for col in range(self.board_size):
+                building = self.board[row][col]
+                if building == 'R':
+                    coins += 1
+                elif building == 'I':
+                    coins += 2
+                    upkeep_cost += 1
+                elif building == 'C':
+                    coins += 3
+                    upkeep_cost += 2
+                elif building == 'O':
+                    upkeep_cost += 1
+                elif building == '*':
+                    if not self.is_connected_road(row, col):
+                        upkeep_cost += 1
+
+        self.current_profit = coins - upkeep_cost
+        self.current_coins += self.current_profit
+
+
     def demolish_building(self):
         # Allow the player to demolish a building for 1 coin
         print("\nSelect a building to demolish:")
@@ -175,9 +292,8 @@ class CityBuildingGame:
             return None, None, None, None
 
     def display_high_scores(self):
-        # Display the top 10 high scores
         print("\nHigh Scores:")
-        print("No high scores to display yet.")
+        print("aaron and isaac, pls implement...")
 
     def display_board(self, board):
         board_size = len(board)
@@ -389,15 +505,8 @@ class CityBuildingGame:
         return False
 
     def update_high_scores(self, final_score):
-        # Placeholder for updating the high scores list
-        print("Updating high scores with final score:", final_score)
-
-    def start_free_play_game(self):
-        # Placeholder for implementing Free Play mode
-        print("\nFree Play mode not implemented yet.")
+        print("Updating high scores with final score:", final_score)  # may be static as not fully implemented
 
 # Start the game
 if __name__ == "__main__":
     game = CityBuildingGame()
-
-
