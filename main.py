@@ -1,4 +1,4 @@
-import json;
+import ast;
 class CityBuildingGame:
     def __init__(self):
         self.main_menu()
@@ -17,14 +17,15 @@ class CityBuildingGame:
             choice = input("Enter your choice: ")
 
             if choice == "1":
+                self.gameMode = "arcade"
                 self.start_arcade_game(userScores)
             elif choice == "2":
+                self.gameMode = "freeplay"
                 self.start_free_play_game(userScores)
             elif choice == "3":
                 self.load_saved_game()
             elif choice == "4":
                 self.display_high_scores(userScores);
-                
             elif choice == "5":
                 print("Exiting game. Goodbye!")
                 break
@@ -273,39 +274,157 @@ class CityBuildingGame:
             else:
                 print("No building at this location.")
 
+    def resume_aracade_mode(self,userScores):
+        # Initialize game state for Arcade mode
+        self.board_size = 20;
+        board = self.board;
+        current_coins = int(self.current_coins);
+        current_score = int(self.current_score);
+        turn = int(self.turn);
+
+        print("\nResuming arcade mode")
+        print("")
+
+        while current_coins > 0:
+            print("\nCurrent turn:", turn)
+            print("Coins left:", current_coins)
+            print("Current score:", current_score)
+            print("Current map:")
+            self.display_board(board)
+
+            print("\nOptions:")
+            print("1. Build a Building")
+            print("2. Demolish a Building")
+            print("3. Save Game")
+            print("4. Exit to Main Menu")
+            choice = input("Enter your choice: ")
+
+            if choice == "1":
+                if self.turn == 1:
+                    self.build_first_building()
+                else:
+                    self.build_building()
+                self.update_score_and_coins()
+            elif choice == "2":
+                self.demolish_building()
+                self.update_score_and_coins()
+            elif choice == "3":
+                self.save_game();
+            elif choice == "4":
+                print("Exiting Arcade game.")
+                break
+            else:
+                print("Invalid choice. Please enter a number from 1 to 4.")
+                continue
+
+            self.turn += 1
+
+        # Calculate final score and display
+        final_score = self.calculate_final_score()
+        print("\nFinal score:", final_score)
+        self.update_high_scores(final_score)
+        # Push the final scores to userScores
+        userScores.append(final_score);
+
     def save_game(self):
+        gameMode = self.gameMode
         board = self.board;
         current_coins = self.current_coins;
         current_score = self.current_score;
+        current_turn = self.turn;
+        print(current_turn)
         filename = input("Enter the file name: ")
-        def  write_board(board):
-            result = '['
+        def write_board(board):
+            result = "["
             for rows in board:
-                row = '[' + ','.join(map(str,rows)) + ']'
-                result += row;
+                row = "[" + ",".join(map(str, rows)) + "]"
+                result += row + ","  # Add a comma after each row
             result = result.rstrip(', ') + ']'  # Remove the trailing comma and space, and close with a square bracket
             return result
-        arrayString = write_board(board);
-        file = open(filename,'w');
-        file.write(f"{current_coins}\n{current_score}\n{arrayString}");
-        file.close();
-        
+
+        arrayString = write_board(board)
+        try:
+            with open(filename, 'w') as file:  # Use a with statement to ensure the file is properly closed
+                file.write(f"{gameMode}\n{current_turn}\n{current_coins}\n{current_score}\n{arrayString}")
+        except FileNotFoundError:
+            print("\nFile not found. Could not load game.")
+            return None
+
 
     def load_saved_game(self):
         # Load a saved game state from a file
+        data = []
         filename = input("Enter file name to load game: ")
         try:
-            with open(filename, 'r') as f:
-                lines = f.readlines()
-                self.current_coins = int(lines[0].strip())
-                self.current_score = int(lines[1].strip())
-                self.turn = int(lines[2].strip())
-                self.board = [line.strip().split() for line in lines[3:]]
-            print("\nGame loaded successfully.")
-            return self.board, self.current_coins, self.current_score, self.turn
+            with open(filename, 'r') as file:
+                # Read all lines from the file
+                lines = file.readlines()
+
+                # Process each line
+                for line in lines:
+                    linedata = line.strip().split('\n')
+                    data.append(linedata)
+
         except FileNotFoundError:
             print("\nFile not found. Could not load game.")
-            return None, None, None, None
+            return None
+        
+        if data != None:
+            try:
+                self.gameMode = data[0][0]
+                self.turn = data[1][0];
+                self.current_coins = data[2][0];
+                self.current_score = data[3][0];
+                boardString = data[4][0]
+                def stringToArray(boardString):
+
+                    input_string = boardString.strip("'");
+                    # Split the string into rows
+                    rows = input_string.split("],");
+                    # End array (Outer list)
+                    result = []
+                    # intiailize a new array for each subarray in the board
+                    for row in rows:
+                        # Remove any remaining brackets if have
+                        row = row.strip("[]")
+                        
+                        # Split the row into elements (retirve all the indexed elements in the row)
+                        elements = row.split(",")
+                        
+                        # Process each element
+                        processed_row = []
+                        for element in elements:
+                            processed_row.append(element)
+                        
+                        result.append(processed_row)
+                        # append each row array to the outerList
+    
+                    return result
+                self.board = stringToArray(boardString)
+                if self.gameMode == 'arcade':
+                    # Run the resume arcade mode
+                    userScores = []
+                    self.resume_aracade_mode(userScores);
+                    print("Resuming Arcade Mode")
+                elif self.gameMode == 'freeplay':
+                    userScores = []
+                    # Run the resume freeplay mode
+                    print("Resuming Freeplay Mode");
+                else:
+                    # Handle the case where gameMode is neither 'arcade' nor 'freeplay'
+                    print("Unknown game mode")
+
+            except IndexError:
+                print("Index defined is out of range")
+        else:
+            print("Data is null Goodbye")
+
+        
+       
+        
+        
+        
+
 
     def display_high_scores(self,userScore):
         if len(userScore) != 0:
