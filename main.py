@@ -1,8 +1,11 @@
+import json;
 class CityBuildingGame:
     def __init__(self):
         self.main_menu()
 
+    # to implement load and save game (start from where the grid left of: grid,column filled,current score of user, and number of coins)
     def main_menu(self):
+        userScores = [];
         while True:
             print("\nWelcome to Ngee Ann City!")
             print("Main Menu:")
@@ -14,20 +17,21 @@ class CityBuildingGame:
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                self.start_arcade_game()
+                self.start_arcade_game(userScores)
             elif choice == "2":
-                self.start_free_play_game()
+                self.start_free_play_game(userScores)
             elif choice == "3":
                 self.load_saved_game()
             elif choice == "4":
-                self.display_high_scores()
+                self.display_high_scores(userScores);
+                
             elif choice == "5":
                 print("Exiting game. Goodbye!")
                 break
             else:
                 print("Invalid choice. Please enter a number from 1 to 5.")
 
-    def start_arcade_game(self):
+    def start_arcade_game(self,userScores):
         # Initialize game state for Arcade mode
         self.board_size = 20
         self.initial_coins = 16
@@ -63,7 +67,7 @@ class CityBuildingGame:
                 self.demolish_building()
                 self.update_score_and_coins()
             elif choice == "3":
-                self.save_game()
+                self.save_game();
             elif choice == "4":
                 print("Exiting Arcade game.")
                 break
@@ -77,6 +81,8 @@ class CityBuildingGame:
         final_score = self.calculate_final_score()
         print("\nFinal score:", final_score)
         self.update_high_scores(final_score)
+        # Push the final scores to userScores
+        userScores.append(final_score);
 
     def build_first_building(self):
         # Allow the player to build any building anywhere on the board in the first turn
@@ -129,7 +135,7 @@ class CityBuildingGame:
                 return True
         return False
 
-    def start_free_play_game(self):
+    def start_free_play_game(self,userScores):
         self.board_size = 5  # Initial size of the city grid
         self.current_coins = 0  # Unlimited coins in Free Play mode
         self.current_score = 0
@@ -175,8 +181,11 @@ class CityBuildingGame:
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
+        
         print("\nFinal score:", final_score)
         self.update_high_scores(final_score)
+        userScores.append(final_score);
+        
 
     def build_building_free_play(self):
         print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
@@ -265,15 +274,22 @@ class CityBuildingGame:
                 print("No building at this location.")
 
     def save_game(self):
-        # Save the game state to a file
-        filename = input("Enter file name to save game: ")
-        with open(filename, 'w') as f:
-            f.write(f"{self.current_coins}\n")
-            f.write(f"{self.current_score}\n")
-            f.write(f"{self.turn}\n")
-            for row in self.board:
-                f.write(" ".join(row) + "\n")
-        print("\nGame saved.")
+        board = self.board;
+        current_coins = self.current_coins;
+        current_score = self.current_score;
+        filename = input("Enter the file name: ")
+        def  write_board(board):
+            result = '['
+            for rows in board:
+                row = '[' + ','.join(map(str,rows)) + ']'
+                result += row;
+            result = result.rstrip(', ') + ']'  # Remove the trailing comma and space, and close with a square bracket
+            return result
+        arrayString = write_board(board);
+        file = open(filename,'w');
+        file.write(f"{current_coins}\n{current_score}\n{arrayString}");
+        file.close();
+        
 
     def load_saved_game(self):
         # Load a saved game state from a file
@@ -291,9 +307,13 @@ class CityBuildingGame:
             print("\nFile not found. Could not load game.")
             return None, None, None, None
 
-    def display_high_scores(self):
-        print("\nHigh Scores:")
-        print("aaron and isaac, pls implement...")
+    def display_high_scores(self,userScore):
+        if len(userScore) != 0:
+            highScore = max(userScore);
+            print(f"User's Highest Score is: {highScore}");
+        else:
+            print("User has not started playing please select a game mode");
+        
 
     def display_board(self, board):
         board_size = len(board)
