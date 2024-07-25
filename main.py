@@ -56,7 +56,8 @@ class CityBuildingGame:
             print("1. Build a Building")
             print("2. Demolish a Building")
             print("3. Save Game")
-            print("4. Exit to Main Menu")
+            print("4. View Instructions")
+            print("5. Exit to Main Menu")
             choice = input("Enter your choice: ")
 
             if choice == "1":
@@ -71,6 +72,8 @@ class CityBuildingGame:
             elif choice == "3":
                 self.save_game();
             elif choice == "4":
+                self.view_arcade_instructions()
+            elif choice == "5":
                 print("Exiting Arcade game.")
                 break
             else:
@@ -161,7 +164,8 @@ class CityBuildingGame:
             print("1. Build a Building")
             print("2. Demolish a Building")
             print("3. Save Game")
-            print("4. Exit to Main Menu")
+            print("4. View Instructions")
+            print("5. Exit to Main Menu")
             choice = input("Enter your choice: ")
 
             if choice == "1":
@@ -173,6 +177,8 @@ class CityBuildingGame:
             elif choice == "3":
                 self.save_game()
             elif choice == "4":
+                self.view_arcade_instructions()
+            elif choice == "5":
                 print("Exiting Free Play game.")
                 break
             else:
@@ -432,10 +438,70 @@ class CityBuildingGame:
 
             except IndexError:
                 print("Index out of range unable to retrieve data")
-                
 
-        
-       
+
+    def view_arcade_instructions(self):
+        instructions = """
+        Game Instructions:
+        1.Starting Coins: You begin the game with 16 coins.
+        2.Turns: In each turn, you will construct one of two randomly selected buildings in the 20x20 city. 
+        Each construction costs 1 coin.
+        3.Building Placement: For the first building, you can build anywhere in the city. However, for subsequent 
+        constructions, you can only build on squares that are connected to existing buildings.
+        4.Scoring System: There are 5 types of buildings in the game:
+        - Residential (R): If a residential building is next to an industry (I), it scores 1 point. Otherwise, it scores 
+        1 point for each adjacent residential (R) or commercial (C) building, and 2 points for each adjacent park (O).
+        - Industry (I): An industry building scores 1 point for each industry in the city. Additionally, each industry 
+        generates 1 coin per adjacent residential building.
+        - Commercial (C): A commercial building scores 1 point for each adjacent commercial building. Furthermore, each 
+        commercial generates 1 coin per adjacent residential building.
+        - Park (O): A park building scores 1 point for each adjacent park building.
+        - Road (*): A road building scores 1 point for each connected road in the same row.
+        5.Profit and Upkeep: Each building type has its own profit and upkeep costs:
+        - Residential (R): Each residential building generates 1 coin per turn. However, each cluster of residential buildings (must be immediately next to each other) requires 1 coin per turn to upkeep.
+        - Industry (I): Each industry building generates 2 coins per turn and costs 1 coin per turn to upkeep.
+        - Commercial (C): Each commercial building generates 3 coins per turn and costs 2 coins per turn to upkeep.
+        - Park (O): Each park building costs 1 coin to upkeep.
+        - Road (*): Each unconnected road segment costs 1 coin to upkeep.
+        6.Objective: Your goal is to strategically place buildings to maximize your city's score.
+        When the player fills up the board or ran out of coins, the score will be computed and displayed.
+        """
+        print(instructions)
+
+
+    def view_freeplay_instructions(self):
+        instructions = """
+        Game Instructions:
+        1. Starting Coins: You begin the game with 16 coins.
+        2. Turns: In each turn, you can construct any of the buildings in the city on any cell. Each construction costs 
+        1 coin.
+        3. Building Placement: For the first building, you can build anywhere in the 5x5 grid. However, for subsequent 
+        constructions, you can only build on cells that are connected to existing buildings via roads.
+        4. City Expansion: When a building is constructed along the border of the city, an additional 5 rows of cells 
+        are added to the perimeter of the city. This means the city will expand to 15x15 on the first expansion 
+        and 25x25 on the second expansion.
+        5. Scoring System: The scoring of buildings is the same as in Arcade mode. There are 5 types of buildings in the 
+        game:
+        - Residential (R): If a residential building is adjacent to an industry (I), it scores 1 point. Otherwise, it 
+        scores 1 point for each adjacent residential (R) or commercial (C) building, and 2 points for each adjacent park 
+        (O) building.
+        - Industry (I): An industry building scores 1 point for each industry building in the city. Additionally, each 
+        industry building generates 1 coin per adjacent residential building.
+        - Commercial (C): A commercial building scores 1 point for each adjacent commercial building. Furthermore, each 
+        commercial building generates 1 coin per adjacent residential building.
+        - Park (O): A park building scores 1 point for each adjacent park building.
+        - Road (*): A road building scores 1 point for each connected road segment in the same row.
+        6. Profit and Upkeep: Each building type has its own profit and upkeep costs:
+        - Residential (R): Each residential building generates 1 coin per turn. However, each cluster of residential 
+        buildings (must be immediately next to each other) requires 1 coin per turn to upkeep.
+        - Industry (I): Each industry building generates 2 coins per turn and costs 1 coin per turn to upkeep.
+        - Commercial (C): Each commercial building generates 3 coins per turn and costs 2 coins per turn to upkeep.
+        - Park (O): Each park building costs 1 coin to upkeep.
+        - Road (*): Each unconnected road segment costs 1 coin to upkeep.
+        7. Objective: Your goal is to strategically place buildings to maximize your city's score.
+        """
+        print(instructions)
+
         
     def resume_free_play_mode(self,userScore):
         self.board_size = len(self.board)  # Resume from size of board
@@ -444,7 +510,7 @@ class CityBuildingGame:
         print("\nStarting new Free Play game.")
         print("You have unlimited coins to build your city.")
 
-        while current_profit >= -20:  # End game if the city is making a loss for 20 turns
+        while self.current_profit >= -20:  # End game if the city is making a loss for 20 turns
             print("\nCurrent turn:", self.current_turn)
             print("Current score:", self.current_score)
             print("Current profit:", self.current_profit)
