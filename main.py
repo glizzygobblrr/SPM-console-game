@@ -192,7 +192,7 @@ class CityBuildingGame:
         
         print("\nFinal score:", final_score)
         self.update_high_scores(final_score)
-        userScores.append(final_score);
+        userScores.append(final_score)
         
 
     def build_building_free_play(self):
