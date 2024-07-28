@@ -66,9 +66,11 @@ class CityBuildingGame:
                 else:
                     self.build_building()
                 self.update_score_and_coins()
+                self.turn += 1
             elif choice == "2":
                 self.demolish_building()
                 self.update_score_and_coins()
+                self.turn += 1
             elif choice == "3":
                 self.save_game();
             elif choice == "4":
@@ -80,7 +82,6 @@ class CityBuildingGame:
                 print("Invalid choice. Please enter a number from 1 to 4.")
                 continue
 
-            self.turn += 1
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
@@ -171,13 +172,15 @@ class CityBuildingGame:
             if choice == "1":
                 self.build_building_free_play()
                 self.update_score_and_coins_free_play()
+                self.turn += 1
             elif choice == "2":
                 self.demolish_building()
                 self.update_score_and_coins_free_play()
+                self.turn += 1
             elif choice == "3":
                 self.save_game()
             elif choice == "4":
-                self.view_arcade_instructions()
+                self.view_freeplay_instructions()
             elif choice == "5":
                 print("Exiting Free Play game.")
                 break
@@ -185,7 +188,6 @@ class CityBuildingGame:
                 print("Invalid choice. Please enter a number from 1 to 4.")
                 continue
 
-            self.turn += 1
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
@@ -472,7 +474,7 @@ class CityBuildingGame:
     def view_freeplay_instructions(self):
         instructions = """
         Game Instructions:
-        1. Starting Coins: You begin the game with 16 coins.
+        1. Starting Coins: You have an infinite amount of coins
         2. Turns: In each turn, you can construct any of the buildings in the city on any cell. Each construction costs 
         1 coin.
         3. Building Placement: For the first building, you can build anywhere in the 5x5 grid. However, for subsequent 
@@ -528,9 +530,11 @@ class CityBuildingGame:
             if choice == "1":
                 self.build_building_free_play()
                 self.update_score_and_coins_free_play()
+                self.turn += 1
             elif choice == "2":
                 self.demolish_building()
                 self.update_score_and_coins_free_play()
+                self.turn += 1
             elif choice == "3":
                 self.save_game()
             elif choice == "4":
@@ -540,7 +544,6 @@ class CityBuildingGame:
                 print("Invalid choice. Please enter a number from 1 to 4.")
                 continue
 
-            self.turn += 1
         
 
 
