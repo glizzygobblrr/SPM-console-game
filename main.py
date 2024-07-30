@@ -3,7 +3,6 @@ class CityBuildingGame:
     def __init__(self):
         self.main_menu()
 
-    # to implement load and save game (start from where the grid left of: grid,column filled,current score of user, and number of coins)
     def main_menu(self):
         userScores = [];
         while True:
@@ -191,11 +190,11 @@ class CityBuildingGame:
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
-        
+
         print("\nFinal score:", final_score)
         self.update_high_scores(final_score)
         userScores.append(final_score)
-        
+
 
     def build_building_free_play(self):
         print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
@@ -283,7 +282,7 @@ class CityBuildingGame:
             else:
                 print("No building at this location.")
 
-    def resume_aracade_mode(self,userScores):
+    def resume_arcade_mode(self,userScores):
         # Initialize game state for Arcade mode
         self.board_size = 20;
         board = self.board;
@@ -291,7 +290,7 @@ class CityBuildingGame:
         print("")
 
         while self.current_coins > 0:
-            print("\nCurrent turn:",self.current_turn)
+            print("\nCurrent turn:",self.turn)
             print("Coins left:", self.current_coins)
             print("Current score:", self.current_score)
             print("Current map:")
@@ -322,7 +321,7 @@ class CityBuildingGame:
                 print("Invalid choice. Please enter a number from 1 to 4.")
                 continue
 
-            self.current_turn  += 1
+            self.turn += 1
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
@@ -336,8 +335,7 @@ class CityBuildingGame:
         board = self.board;
         current_coins = self.current_coins;
         current_score = self.current_score;
-        current_turn = self.current_turn;
-        print(current_turn)
+        current_turn = self.turn;
         filename = input("Enter the file name: ")
         def write_board(board):
             result = "["
@@ -364,7 +362,7 @@ class CityBuildingGame:
             except FileNotFoundError:
                 print("\nFile not found. Could not load game.")
                 return None
-        
+
 
 
     def load_saved_game(self):
@@ -395,20 +393,20 @@ class CityBuildingGame:
             for row in rows:
                 # Remove any remaining brackets if have
                 row = row.strip("[]")
-                
+
                 # Split the row into elements (retirve all the indexed elements in the row)
                 elements = row.split(",")
-                
+
                 # Process each element
                 processed_row = []
                 for element in elements:
                     processed_row.append(element)
-                
+
                 result.append(processed_row)
                 # append each row array to the outerList
 
             return result
-        
+
         if data != None:
             try:
                 gameMode = data[0][0]
@@ -420,7 +418,7 @@ class CityBuildingGame:
                     boardString = data[4][0]
                     self.board = stringToArray(boardString)
                     userScores = []
-                    self.resume_aracade_mode(userScores);
+                    self.resume_arcade_mode(userScores);
                     print("Resuming Arcade Mode")
 
 
@@ -504,7 +502,7 @@ class CityBuildingGame:
         """
         print(instructions)
 
-        
+
     def resume_free_play_mode(self,userScore):
         self.board_size = len(self.board)  # Resume from size of board
         board = self.board;
@@ -544,16 +542,16 @@ class CityBuildingGame:
                 print("Invalid choice. Please enter a number from 1 to 4.")
                 continue
 
-        
+
 
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
-        
+
         print("\nFinal score:", final_score)
         self.update_high_scores(final_score)
         userScore.append(final_score);
-        
+
 
 
     def display_high_scores(self,userScore):
@@ -562,7 +560,7 @@ class CityBuildingGame:
             print(f"User's Highest Score is: {highScore}");
         else:
             print("User has not started playing please select a game mode");
-        
+
 
     def display_board(self, board):
         board_size = len(board)
