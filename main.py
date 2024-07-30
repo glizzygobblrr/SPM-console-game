@@ -222,6 +222,7 @@ class CityBuildingGame:
             return self.board[row][col] == ' '
         return False
 
+    #if the grid expansion is infinite
     def is_on_border(self, row, col):
         return row == 0 or col == 0 or row == self.board_size - 1 or col == self.board_size - 1
 
@@ -236,6 +237,25 @@ class CityBuildingGame:
 
         self.board = new_board
         self.board_size = new_board_size
+
+    #if the max grid expansion is 25x25
+    """    def expand_city_grid(self):
+        max_size = 25  # Maximum board size
+        new_board_size = min(self.board_size + 10,
+                             max_size)  # Expand by 10 rows and columns on each side, but not beyond max_size
+
+        # Create new board with the new size
+        new_board = [[' '] * new_board_size for _ in range(new_board_size)]
+
+        # Copy existing board to new expanded board
+        for r in range(self.board_size):
+            for c in range(self.board_size):
+                new_board[r + max(0, (new_board_size - self.board_size) // 2)][
+                    c + max(0, (new_board_size - self.board_size) // 2)] = self.board[r][c]
+
+        self.board = new_board
+        self.board_size = new_board_size
+    """
 
     def update_score_and_coins_free_play(self):
         self.current_score = self.calculate_final_score()
