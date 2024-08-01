@@ -12,7 +12,8 @@ class CityBuildingGame:
             print("2. Start New Free Play Game")
             print("3. Load Saved Game")
             print("4. Display High Scores")
-            print("5. Exit Game")
+            print("5. Display Credits")
+            print("6. Exit Game")
             choice = input("Enter your choice: ")
 
             if choice == "1":
@@ -26,10 +27,12 @@ class CityBuildingGame:
             elif choice == "4":
                 self.display_high_scores(userScores);
             elif choice == "5":
+                self.display_credits();
+            elif choice == "6":
                 print("Exiting game. Goodbye!")
                 break
             else:
-                print("Invalid choice. Please enter a number from 1 to 5.")
+                print("Invalid choice. Please enter a number from 1 to 6.")
 
     def start_arcade_game(self,userScores):
         # Initialize game state for Arcade mode
@@ -78,7 +81,7 @@ class CityBuildingGame:
                 print("Exiting Arcade game.")
                 break
             else:
-                print("Invalid choice. Please enter a number from 1 to 4.")
+                print("Invalid choice. Please enter a number from 1 to 5.")
                 continue
 
 
@@ -794,6 +797,13 @@ class CityBuildingGame:
     def update_high_scores(self, final_score):
         print("Updating high scores with final score:", final_score)  # may be static as not fully implemented
 
+    def display_credits(self):
+        print("Displaying credits:")
+        print("Putera Daniel - Developer")
+        print("Isaac Tiew - SCRUM Master, Developer")
+        print("Aaron Lua - Developer")
+        print("Chang Zhi Heng - Product Owner, Developer")
+        print("Casey Tan - Developer")
 # Start the game
 if __name__ == "__main__":
     game = CityBuildingGame()
