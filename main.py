@@ -550,9 +550,9 @@ class CityBuildingGame:
 
     def resume_free_play_mode(self,userScore):
         self.board_size = len(self.board)  # Resume from size of board
-        board = self.board;
+        
 
-        print("\nStarting new Free Play game.")
+        print("\nResuming freeplay mode.")
         print("You have unlimited coins to build your city.")
 
         while self.current_profit >= -20:  # End game if the city is making a loss for 20 turns
@@ -561,7 +561,7 @@ class CityBuildingGame:
             print("Current profit:", self.current_profit)
             print("Current upkeep:", self.current_upkeep)
             print("Current map:")
-            self.display_board(board)
+            self.display_board(self.board)
 
             print("\nOptions:")
             print("1. Build a Building")
@@ -573,11 +573,11 @@ class CityBuildingGame:
             if choice == "1":
                 self.build_building_free_play()
                 self.update_score_and_coins_free_play()
-                self.turn += 1
+                self.current_turn += 1
             elif choice == "2":
                 self.demolish_building()
                 self.update_score_and_coins_free_play()
-                self.turn += 1
+                self.current_turn += 1
             elif choice == "3":
                 self.save_game()
             elif choice == "4":
