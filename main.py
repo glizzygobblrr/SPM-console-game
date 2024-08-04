@@ -4,7 +4,7 @@ class CityBuildingGame:
         self.main_menu()
 
     def main_menu(self):
-        userScores = [];
+        userScores = []
         while True:
             print("\nWelcome to Ngee Ann City!")
             print("Main Menu:")
@@ -25,18 +25,18 @@ class CityBuildingGame:
             elif choice == "3":
                 self.load_saved_game()
             elif choice == "4":
-                self.display_high_scores(userScores);
+                self.display_high_scores(userScores)
             elif choice == "5":
-                self.display_credits();
+                self.display_credits()
             elif choice == "6":
                 print("Exiting game. Goodbye!")
                 break
             else:
                 print("Invalid choice. Please enter a number from 1 to 6.")
 
-    def start_arcade_game(self,userScores):
+    def start_arcade_game(self, userScores):
         # Initialize game state for Arcade mode
-        print(self.gameMode);
+        print(self.gameMode)
         self.board_size = 20
         self.initial_coins = 16
         self.current_coins = self.initial_coins
@@ -64,63 +64,72 @@ class CityBuildingGame:
 
             if choice == "1":
                 if self.turn == 1:
-                    self.build_first_building()
+                    action_taken = self.build_first_building()
                 else:
-                    self.build_building()
-                self.update_score_and_coins()
-                self.turn += 1
+                    action_taken = self.build_building()
+                if action_taken:
+                    self.update_score_and_coins()
+                    self.turn += 1
             elif choice == "2":
-                self.demolish_building()
-                self.update_score_and_coins()
-                self.turn += 1
+                action_taken = self.demolish_building()
+                if action_taken:
+                    self.update_score_and_coins()
+                    self.turn += 1
             elif choice == "3":
-                self.save_game();
+                self.save_game()
             elif choice == "4":
                 self.view_arcade_instructions()
             elif choice == "5":
                 print("Exiting Arcade game.")
                 break
             else:
-                print("Invalid choice. Please enter a number from 1 to 5.")
-                continue
-
+                print("Invalid choice. Please enter a number from 1 to 5.")  # Update the range
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
         print("\nFinal score:", final_score)
         self.update_high_scores(final_score)
         # Push the final scores to userScores
-        userScores.append(final_score);
+        userScores.append(final_score)
 
     def build_first_building(self):
-        # Allow the player to build any building anywhere on the board in the first turn
-        print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
-        building_type = input("Choose a building to construct: ").upper()
-        if building_type not in ['R', 'I', 'C', 'O', '*']:
-            print("Invalid building type. Please choose from R, I, C, O, *.")
-            return
+        while True:
+            # Allow the player to build any building anywhere on the board in the first turn
+            print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
+            print("0. Return to Previous Menu")
+            building_type = input("Choose a building to construct or return: ").upper()
 
-        row = int(input("Enter row (1-20): ")) - 1
-        col = int(input("Enter column (1-20): ")) - 1
+            if building_type == "0":
+                return False
+            elif building_type not in ['R', 'I', 'C', 'O', '*']:
+                print("Invalid building type. Please choose from R, I, C, O, *.")
+                continue
 
-        if self.board[row][col] != ' ':
-            print("Cannot build on an occupied space.")
-            return
+            row = int(input("Enter row (1-20): ")) - 1
+            col = int(input("Enter column (1-20): ")) - 1
 
-        self.board[row][col] = building_type
-        self.current_coins -= 1
+            if self.board[row][col] != ' ':
+                print("Cannot build on an occupied space.")
+                continue
+
+            self.board[row][col] = building_type
+            self.current_coins -= 1
+            return True
 
     def build_building(self):
         # Allow the player to build a building adjacent to an existing building
         print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
+        print("0. Return to Previous Menu")
         building_type = input("Choose a building to construct: ").upper()
+        if building_type == "0":
+            return False  # Return False to indicate no action was taken
         if building_type not in ['R', 'I', 'C', 'O', '*']:
             print("Invalid building type. Please choose from R, I, C, O, *.")
-            return
+            return False  # Return False to indicate no action was taken
 
-        print("Select a location adjacent to an existing building:")
         self.display_board(self.board)
         while True:
+            print("Select a location adjacent to an existing building:")
             row = int(input("Enter row (1-20): ")) - 1
             col = int(input("Enter column (1-20): ")) - 1
 
@@ -128,7 +137,7 @@ class CityBuildingGame:
                 if self.board[row][col] == ' ':
                     self.board[row][col] = building_type
                     self.current_coins -= 1
-                    break
+                    return True  # Return True to indicate an action was taken
                 else:
                     print("Cannot build on an occupied space.")
             else:
@@ -143,7 +152,7 @@ class CityBuildingGame:
                 return True
         return False
 
-    def start_free_play_game(self,userScores):
+    def start_free_play_game(self, userScores):
         self.board_size = 5  # Initial size of the city grid
         self.current_coins = 0  # Unlimited coins in Free Play mode
         self.current_score = 0
@@ -172,13 +181,15 @@ class CityBuildingGame:
             choice = input("Enter your choice: ")
 
             if choice == "1":
-                self.build_building_free_play()
-                self.update_score_and_coins_free_play()
-                self.turn += 1
+                action_taken = self.build_building_free_play()
+                if action_taken:
+                    self.update_score_and_coins_free_play()
+                    self.turn += 1
             elif choice == "2":
-                self.demolish_building()
-                self.update_score_and_coins_free_play()
-                self.turn += 1
+                action_taken = self.demolish_building()
+                if action_taken:
+                    self.update_score_and_coins_free_play()
+                    self.turn += 1
             elif choice == "3":
                 self.save_game()
             elif choice == "4":
@@ -187,9 +198,7 @@ class CityBuildingGame:
                 print("Exiting Free Play game.")
                 break
             else:
-                print("Invalid choice. Please enter a number from 1 to 4.")
-                continue
-
+                print("Invalid choice. Please enter a number from 1 to 5.")  # Update the range
 
         # Calculate final score and display
         final_score = self.calculate_final_score()
@@ -198,20 +207,22 @@ class CityBuildingGame:
         self.update_high_scores(final_score)
         userScores.append(final_score)
 
-
     def build_building_free_play(self):
         print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
+        print("0. Return to Previous Menu")  # Add this line
         building_type = input("Choose a building to construct: ").upper()
+        if building_type == "0":
+            return False  # Return False to indicate no action was taken
         if building_type not in ['R', 'I', 'C', 'O', '*']:
             print("Invalid building type. Please choose from R, I, C, O, *.")
-            return
+            return False
 
         row = int(input(f"Enter row (1-{self.board_size}): ")) - 1
         col = int(input(f"Enter column (1-{self.board_size}): ")) - 1
 
         if not self.is_valid_location(row, col):
             print("Invalid location. Building must be placed on an empty cell or border.")
-            return
+            return False
 
         # Expand city grid if building is placed on the border
         if self.is_on_border(row, col):
@@ -219,6 +230,7 @@ class CityBuildingGame:
 
         self.board[row][col] = building_type
         self.current_coins -= 1
+        return True  # Return True to indicate an action was taken
 
     def is_valid_location(self, row, col):
         if 0 <= row < self.board_size and 0 <= col < self.board_size:
@@ -288,14 +300,15 @@ class CityBuildingGame:
         self.current_profit = coins - upkeep_cost
         self.current_coins += self.current_profit
 
-
     def demolish_building(self):
         # Allow the player to demolish a building for 1 coin
         print("\nSelect a building to demolish:")
         self.display_board(self.board)
 
         while True:
-            row = int(input("Enter row (1-20): ")) - 1
+            row = int(input("Enter row (1-20) or 0 to return to the previous menu: ")) - 1  # Update the prompt
+            if row == -1:
+                return  # Add this line to return to the previous menu
             col = int(input("Enter column (1-20): ")) - 1
 
             if self.board[row][col] != ' ':
@@ -354,12 +367,21 @@ class CityBuildingGame:
         userScores.append(final_score);
 
     def save_game(self):
-        gameMode = self.gameMode
-        board = self.board;
-        current_coins = self.current_coins;
-        current_score = self.current_score;
-        current_turn = self.turn;
-        filename = input("Enter the file name: ")
+        while True:
+            print("\nSave Game Options:")
+            print("1. Save Game")
+            print("2. Return to Previous Menu")
+            save_choice = input("Enter your choice: ")
+
+            if save_choice == "2":
+                return
+
+            gameMode = self.gameMode
+            board = self.board
+            current_coins = self.current_coins
+            current_score = self.current_score
+            current_turn = self.turn
+            filename = input("Enter the file name: ")
         def write_board(board):
             result = "["
             for rows in board:
@@ -799,6 +821,7 @@ class CityBuildingGame:
 
     def display_credits(self):
         print("Displaying credits:")
+        print("")
         print("Putera Daniel - Developer")
         print("Isaac Tiew - SCRUM Master, Developer")
         print("Aaron Lua - Developer")
