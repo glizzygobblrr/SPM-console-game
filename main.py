@@ -160,6 +160,7 @@ class CityBuildingGame:
         self.current_upkeep = 0
         self.turn = 1
         self.board = [[' '] * self.board_size for _ in range(self.board_size)]
+        self.first_building = True  # Track if it's the first building
 
         print("\nStarting new Free Play game.")
         print("You have unlimited coins to build your city.")
@@ -209,10 +210,10 @@ class CityBuildingGame:
 
     def build_building_free_play(self):
         print("\nAvailable buildings: R (Residential), I (Industry), C (Commercial), O (Park), * (Road)")
-        print("0. Return to Previous Menu")  # Add this line
+        print("0. Return to Previous Menu")
         building_type = input("Choose a building to construct: ").upper()
         if building_type == "0":
-            return False  # Return False to indicate no action was taken
+            return False
         if building_type not in ['R', 'I', 'C', 'O', '*']:
             print("Invalid building type. Please choose from R, I, C, O, *.")
             return False
@@ -220,8 +221,9 @@ class CityBuildingGame:
         row = int(input(f"Enter row (1-{self.board_size}): ")) - 1
         col = int(input(f"Enter column (1-{self.board_size}): ")) - 1
 
-        if not self.is_valid_location(row, col):
-            print("Invalid location. Building must be placed on an empty cell or border.")
+        if not self.is_valid_location(row, col, building_type):
+            print(
+                "Invalid location. Building must be placed on an empty cell, adjacent to an existing building, and connected via a road.")
             return False
 
         # Expand city grid if building is placed on the border
@@ -230,11 +232,60 @@ class CityBuildingGame:
 
         self.board[row][col] = building_type
         self.current_coins -= 1
-        return True  # Return True to indicate an action was taken
+        self.first_building = False  # After placing the first building, set this to False
+        return True
 
-    def is_valid_location(self, row, col):
-        if 0 <= row < self.board_size and 0 <= col < self.board_size:
-            return self.board[row][col] == ' '
+    def is_valid_location(self, row, col, building_type):
+        if building_type == '*' and self.board[row][col] == ' ':
+            return True  # Roads can be placed on empty cells
+
+        # Check if the location is within the board boundaries and is empty
+        if not (0 <= row < self.board_size and 0 <= col < self.board_size and self.board[row][col] == ' '):
+            return False
+
+        # For the first building, allow placement anywhere
+        if self.first_building:
+            return True
+
+        # Check if the location is adjacent to an existing building and connected to a road
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = row + dr, col + dc
+            if 0 <= nr < self.board_size and 0 <= nc < self.board_size:
+                if self.board[nr][nc] != ' ' and self.is_connected_via_road(nr, nc):
+                    return True
+
+        return False
+
+    def is_on_border(self, row, col):
+        return row == 0 or row == self.board_size - 1 or col == 0 or col == self.board_size - 1
+
+    def expand_city_grid(self):
+        new_size = self.board_size + 10
+        new_board = [[' '] * new_size for _ in range(new_size)]
+
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                new_board[i + 5][j + 5] = self.board[i][j]
+
+        self.board = new_board
+        self.board_size = new_size
+        print(f"City expanded to {self.board_size}x{self.board_size}.")
+
+    def is_connected_via_road(self, row, col):
+        visited = set()
+        stack = [(row, col)]
+        while stack:
+            r, c = stack.pop()
+            if (r, c) in visited:
+                continue
+            visited.add((r, c))
+            if self.board[r][c] == '*':
+                return True
+            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < self.board_size and 0 <= nc < self.board_size and (nr, nc) not in visited and \
+                        self.board[nr][nc] != ' ':
+                    stack.append((nr, nc))
         return False
 
     #if the grid expansion is infinite
