@@ -433,31 +433,31 @@ class CityBuildingGame:
             current_score = self.current_score
             current_turn = self.turn
             filename = input("Enter the file name: ")
-        def write_board(board):
-            result = "["
-            for rows in board:
-                row = "[" + ",".join(map(str, rows)) + "]"
-                result += row + ","  # Add a comma after each row
-            result = result.rstrip(', ') + ']'  # Remove the trailing comma and space, and close with a square bracket
-            return result
+            def write_board(board):
+                result = "["
+                for rows in board:
+                    row = "[" + ",".join(map(str, rows)) + "]"
+                    result += row + ","  # Add a comma after each row
+                result = result.rstrip(', ') + ']'  # Remove the trailing comma and space, and close with a square bracket
+                return result
 
-        arrayString = write_board(board)
-        if gameMode == 'arcade':
-            try:
-                with open(filename, 'w') as file:  # Use a with statement to ensure the file is properly closed
-                    file.write(f"{gameMode}\n{current_turn}\n{current_coins}\n{current_score}\n{arrayString}")
-            except FileNotFoundError:
-                print("\nFile not found. Could not load game.")
-                return None
-        elif gameMode == 'freeplay':
-            try:
-                current_profit = self.current_profit
-                current_upkeep = self.current_upkeep
-                with open(filename, 'w') as file:  # Use a with statement to ensure the file is properly closed
-                    file.write(f"{gameMode}\n{current_turn}\n{current_coins}\n{current_score}\n{current_profit}\n{current_upkeep}\n{arrayString}")
-            except FileNotFoundError:
-                print("\nFile not found. Could not load game.")
-                return None
+            arrayString = write_board(board)
+            if gameMode == 'arcade':
+                try:
+                    with open(filename, 'w') as file:  # Use a with statement to ensure the file is properly closed
+                        file.write(f"{gameMode}\n{current_turn}\n{current_coins}\n{current_score}\n{arrayString}")
+                except FileNotFoundError:
+                    print("\nFile not found. Could not load game.")
+                    return None
+            elif gameMode == 'freeplay':
+                try:
+                    current_profit = self.current_profit
+                    current_upkeep = self.current_upkeep
+                    with open(filename, 'w') as file:  # Use a with statement to ensure the file is properly closed
+                        file.write(f"{gameMode}\n{current_turn}\n{current_coins}\n{current_score}\n{current_profit}\n{current_upkeep}\n{arrayString}")
+                except FileNotFoundError:
+                    print("\nFile not found. Could not load game.")
+                    return None
 
 
 
@@ -465,6 +465,7 @@ class CityBuildingGame:
         # Load a saved game state from a file
         data = []
         filename = input("Enter file name to load game: ")
+        print(filename);
         try:
             with open(filename, 'r') as file:
                 # Read all lines from the file
